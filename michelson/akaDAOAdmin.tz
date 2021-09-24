@@ -1,0 +1,1028 @@
+{
+    storage
+        (pair
+            (pair
+                (pair
+                    (big_map %akaContract_list address unit)
+                    (address %akaDAOToken))
+                (pair
+                    (int %akaDAO_stage)
+                    (pair
+                        (nat %assign_akaDAO_amount)
+                        (big_map %assign_high_list address unit))))
+            (pair
+                (pair
+                    (nat %assign_high_ratio)
+                    (big_map %assign_low_list address unit))
+                (pair
+                    (nat %assign_low_ratio)
+                    (pair
+                        (address %manager)
+                        (big_map %metadata string bytes)))));
+    parameter
+        (or
+            (or
+                (or
+                    (pair %akaDAO_admin_transfer
+                        (nat %akaDAO_amount)
+                        (pair
+                            (address %from_)
+                            (address %to_)))
+                    (pair %assign_akaDAO
+                        (address %buyer)
+                        (pair
+                            (address %issuer)
+                            (nat %totalPrice))))
+                (or
+                    (pair %next_akaDAO_stage
+                        (nat %assign_high_ratio)
+                        (nat %assign_low_ratio))
+                    (or
+                        (pair %set_akaDAOToken_metadata
+                            (string %k)
+                            (bytes %v))
+                        (bool %set_akaDAO_pause))))
+            (or
+                (or
+                    (pair %set_metadata
+                        (string %k)
+                        (bytes %v))
+                    (list %update_akaContract_list
+                        (or
+                            (address %add_contract)
+                            (address %remove_contract))))
+                (or
+                    (list %update_assign_high_list
+                        (or
+                            (address %add_contract)
+                            (address %remove_contract)))
+                    (or
+                        (list %update_assign_low_list
+                            (or
+                                (address %add_contract)
+                                (address %remove_contract)))
+                        (address %update_manager)))));
+    code
+        {
+            CAST
+                (pair
+                    (or
+                        (or
+                            (or
+                                (pair
+                                    nat
+                                    (pair address address))
+                                (pair
+                                    address
+                                    (pair address nat)))
+                            (or
+                                (pair nat nat)
+                                (or
+                                    (pair string bytes)
+                                    bool)))
+                        (or
+                            (or
+                                (pair string bytes)
+                                (list
+                                    (or address address)))
+                            (or
+                                (list
+                                    (or address address))
+                                (or
+                                    (list
+                                        (or address address))
+                                    address))))
+                    (pair
+                        (pair
+                            (pair
+                                (big_map address unit)
+                                address)
+                            (pair
+                                int
+                                (pair
+                                    nat
+                                    (big_map address unit))))
+                        (pair
+                            (pair
+                                nat
+                                (big_map address unit))
+                            (pair
+                                nat
+                                (pair
+                                    address
+                                    (big_map string bytes))))));
+            UNPAIR;
+            IF_LEFT
+                {
+                    IF_LEFT
+                        {
+                            IF_LEFT
+                                {
+                                    SWAP;
+                                    DUP;
+                                    DUG 2;
+                                    CAR;
+                                    CAR;
+                                    CAR;
+                                    SENDER;
+                                    MEM;
+                                    IF
+                                        {
+                                        }
+                                        {
+                                            PUSH string "WrongCondition: self.data.akaContract_list.contains(sp.sender)";
+                                            FAILWITH
+                                        };
+                                    NIL operation;
+                                    DUP 3;
+                                    CAR;
+                                    CAR;
+                                    CDR;
+                                    CONTRACT %transfer
+                                        (list
+                                            (pair
+                                                address
+                                                (list
+                                                    (pair
+                                                        address
+                                                        (pair nat nat)))));
+                                    IF_NONE
+                                        {
+                                            PUSH int 141;
+                                            FAILWITH
+                                        }
+                                        {
+                                        };
+                                    PUSH mutez 0;
+                                    NIL
+                                        (pair
+                                            address
+                                            (list
+                                                (pair
+                                                    address
+                                                    (pair nat nat))));
+                                    NIL
+                                        (pair
+                                            address
+                                            (pair nat nat));
+                                    DUP 6;
+                                    CAR;
+                                    PUSH nat 0;
+                                    DUP 8;
+                                    GET 4;
+                                    PAIR 3;
+                                    CONS;
+                                    DIG 5;
+                                    GET 3;
+                                    PAIR;
+                                    CONS;
+                                    TRANSFER_TOKENS;
+                                    CONS
+                                }
+                                {
+                                    SWAP;
+                                    DUP;
+                                    DUG 2;
+                                    GET 3;
+                                    CDR;
+                                    SENDER;
+                                    MEM;
+                                    IF
+                                        {
+                                            PUSH bool True
+                                        }
+                                        {
+                                            SWAP;
+                                            DUP;
+                                            DUG 2;
+                                            CAR;
+                                            GET 6;
+                                            SENDER;
+                                            MEM
+                                        };
+                                    IF
+                                        {
+                                        }
+                                        {
+                                            PUSH string "sender is not is low or high list";
+                                            FAILWITH
+                                        };
+                                    PUSH int 0;
+                                    DUP 3;
+                                    CAR;
+                                    GET 3;
+                                    COMPARE;
+                                    GT;
+                                    IF
+                                        {
+                                            PUSH int 6;
+                                            DUP 3;
+                                            CAR;
+                                            GET 3;
+                                            COMPARE;
+                                            LT
+                                        }
+                                        {
+                                            PUSH bool False
+                                        };
+                                    IF
+                                        {
+                                            DUP;
+                                            GET 4;
+                                            DUP;
+                                            PUSH nat 50000000;
+                                            COMPARE;
+                                            LT;
+                                            IF
+                                                {
+                                                    DROP;
+                                                    PUSH nat 50000000
+                                                }
+                                                {
+                                                };
+                                            DUP 3;
+                                            GET 3;
+                                            CDR;
+                                            SENDER;
+                                            MEM;
+                                            IF
+                                                {
+                                                    PUSH nat 2000;
+                                                    DUP 4;
+                                                    GET 5;
+                                                    DUP 3;
+                                                    MUL;
+                                                    EDIV;
+                                                    IF_NONE
+                                                        {
+                                                            PUSH int 124;
+                                                            FAILWITH
+                                                        }
+                                                        {
+                                                            CAR
+                                                        }
+                                                }
+                                                {
+                                                    PUSH nat 2000;
+                                                    DUP 4;
+                                                    GET 3;
+                                                    CAR;
+                                                    DUP 3;
+                                                    MUL;
+                                                    EDIV;
+                                                    IF_NONE
+                                                        {
+                                                            PUSH int 126;
+                                                            FAILWITH
+                                                        }
+                                                        {
+                                                            CAR
+                                                        }
+                                                };
+                                            DUP 4;
+                                            CAR;
+                                            GET 5;
+                                            SWAP;
+                                            DUP;
+                                            DUG 2;
+                                            COMPARE;
+                                            GT;
+                                            IF
+                                                {
+                                                    DROP;
+                                                    DUP 3;
+                                                    CAR;
+                                                    GET 5
+                                                }
+                                                {
+                                                };
+                                            DUP 4;
+                                            UNPAIR;
+                                            UNPAIR;
+                                            SWAP;
+                                            UNPAIR;
+                                            SWAP;
+                                            CDR;
+                                            DUP 5;
+                                            DIG 8;
+                                            CAR;
+                                            GET 5;
+                                            SUB;
+                                            ABS;
+                                            PAIR;
+                                            SWAP;
+                                            PAIR;
+                                            SWAP;
+                                            PAIR;
+                                            PAIR;
+                                            DUG 3;
+                                            DUP;
+                                            PUSH nat 0;
+                                            COMPARE;
+                                            LT;
+                                            IF
+                                                {
+                                                    NIL operation;
+                                                    DUP 5;
+                                                    CAR;
+                                                    CAR;
+                                                    CDR;
+                                                    CONTRACT %transfer
+                                                        (list
+                                                            (pair
+                                                                address
+                                                                (list
+                                                                    (pair
+                                                                        address
+                                                                        (pair nat nat)))));
+                                                    IF_NONE
+                                                        {
+                                                            PUSH int 141;
+                                                            FAILWITH
+                                                        }
+                                                        {
+                                                        };
+                                                    PUSH mutez 0;
+                                                    NIL
+                                                        (pair
+                                                            address
+                                                            (list
+                                                                (pair
+                                                                    address
+                                                                    (pair nat nat))));
+                                                    NIL
+                                                        (pair
+                                                            address
+                                                            (pair nat nat));
+                                                    DUP 6;
+                                                    PUSH nat 0;
+                                                    DUP 10;
+                                                    CAR;
+                                                    PAIR 3;
+                                                    CONS;
+                                                    SELF_ADDRESS;
+                                                    PAIR;
+                                                    CONS;
+                                                    TRANSFER_TOKENS;
+                                                    CONS
+                                                }
+                                                {
+                                                    NIL operation
+                                                };
+                                            DUP 5;
+                                            CAR;
+                                            GET 5;
+                                            DUP 3;
+                                            COMPARE;
+                                            GT;
+                                            IF
+                                                {
+                                                    SWAP;
+                                                    DROP;
+                                                    SWAP;
+                                                    DROP;
+                                                    DUP 3;
+                                                    CAR;
+                                                    GET 5;
+                                                    SWAP
+                                                }
+                                                {
+                                                    DIG 2;
+                                                    DROP
+                                                };
+                                            DUP 4;
+                                            UNPAIR;
+                                            UNPAIR;
+                                            SWAP;
+                                            UNPAIR;
+                                            SWAP;
+                                            CDR;
+                                            DUP 6;
+                                            DIG 8;
+                                            CAR;
+                                            GET 5;
+                                            SUB;
+                                            ABS;
+                                            PAIR;
+                                            SWAP;
+                                            PAIR;
+                                            SWAP;
+                                            PAIR;
+                                            PAIR;
+                                            DUG 3;
+                                            PUSH nat 0;
+                                            DUP 3;
+                                            COMPARE;
+                                            GT;
+                                            IF
+                                                {
+                                                    DUP 4;
+                                                    CAR;
+                                                    CAR;
+                                                    CDR;
+                                                    CONTRACT %transfer
+                                                        (list
+                                                            (pair
+                                                                address
+                                                                (list
+                                                                    (pair
+                                                                        address
+                                                                        (pair nat nat)))));
+                                                    IF_NONE
+                                                        {
+                                                            PUSH int 141;
+                                                            FAILWITH
+                                                        }
+                                                        {
+                                                        };
+                                                    PUSH mutez 0;
+                                                    NIL
+                                                        (pair
+                                                            address
+                                                            (list
+                                                                (pair
+                                                                    address
+                                                                    (pair nat nat))));
+                                                    NIL
+                                                        (pair
+                                                            address
+                                                            (pair nat nat));
+                                                    DIG 5;
+                                                    PUSH nat 0;
+                                                    DIG 7;
+                                                    GET 3;
+                                                    PAIR 3;
+                                                    CONS;
+                                                    SELF_ADDRESS;
+                                                    PAIR;
+                                                    CONS;
+                                                    TRANSFER_TOKENS;
+                                                    CONS
+                                                }
+                                                {
+                                                    SWAP;
+                                                    DROP;
+                                                    SWAP;
+                                                    DROP
+                                                }
+                                        }
+                                        {
+                                            DROP;
+                                            NIL operation
+                                        }
+                                }
+                        }
+                        {
+                            IF_LEFT
+                                {
+                                    SWAP;
+                                    DUP;
+                                    DUG 2;
+                                    GET 7;
+                                    SENDER;
+                                    COMPARE;
+                                    EQ;
+                                    IF
+                                        {
+                                            PUSH int 6;
+                                            DUP 3;
+                                            CAR;
+                                            GET 3;
+                                            COMPARE;
+                                            LT
+                                        }
+                                        {
+                                            PUSH bool False
+                                        };
+                                    IF
+                                        {
+                                        }
+                                        {
+                                            PUSH string "WrongCondition: (sp.sender == self.data.manager) & (self.data.akaDAO_stage < 6)";
+                                            FAILWITH
+                                        };
+                                    SWAP;
+                                    UNPAIR;
+                                    UNPAIR;
+                                    SWAP;
+                                    UNPAIR;
+                                    PUSH int 1;
+                                    ADD;
+                                    PAIR;
+                                    SWAP;
+                                    PAIR;
+                                    PAIR;
+                                    SWAP;
+                                    PUSH int 1;
+                                    DUP 3;
+                                    CAR;
+                                    GET 3;
+                                    COMPARE;
+                                    EQ;
+                                    IF
+                                        {
+                                            SWAP;
+                                            UNPAIR;
+                                            UNPAIR;
+                                            SWAP;
+                                            UNPAIR;
+                                            SWAP;
+                                            CDR;
+                                            PUSH nat 100000000000;
+                                            PAIR;
+                                            SWAP;
+                                            PAIR;
+                                            SWAP;
+                                            PAIR;
+                                            PAIR;
+                                            SWAP;
+                                            DUP;
+                                            DUG 2;
+                                            CDR;
+                                            UPDATE 5;
+                                            UNPAIR;
+                                            SWAP;
+                                            UNPAIR;
+                                            CDR;
+                                            DIG 3;
+                                            CAR;
+                                            PAIR;
+                                            PAIR;
+                                            SWAP;
+                                            PAIR;
+                                            NIL operation
+                                        }
+                                        {
+                                            NIL operation;
+                                            DUP 3;
+                                            CAR;
+                                            CAR;
+                                            CDR;
+                                            CONTRACT %transfer
+                                                (list
+                                                    (pair
+                                                        address
+                                                        (list
+                                                            (pair
+                                                                address
+                                                                (pair nat nat)))));
+                                            IF_NONE
+                                                {
+                                                    PUSH int 141;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            PUSH mutez 0;
+                                            NIL
+                                                (pair
+                                                    address
+                                                    (list
+                                                        (pair
+                                                            address
+                                                            (pair nat nat))));
+                                            NIL
+                                                (pair
+                                                    address
+                                                    (pair nat nat));
+                                            DUP 7;
+                                            CAR;
+                                            GET 5;
+                                            PUSH nat 0;
+                                            DUP 9;
+                                            GET 7;
+                                            PAIR 3;
+                                            CONS;
+                                            SELF_ADDRESS;
+                                            PAIR;
+                                            CONS;
+                                            TRANSFER_TOKENS;
+                                            CONS;
+                                            PUSH nat 0;
+                                            DUP 3;
+                                            CDR;
+                                            COMPARE;
+                                            GE;
+                                            IF
+                                                {
+                                                    PUSH nat 10;
+                                                    PUSH nat 9;
+                                                    DUP 5;
+                                                    GET 5;
+                                                    MUL;
+                                                    EDIV;
+                                                    IF_NONE
+                                                        {
+                                                            PUSH int 74;
+                                                            FAILWITH
+                                                        }
+                                                        {
+                                                            CAR
+                                                        };
+                                                    DUP 3;
+                                                    CDR;
+                                                    COMPARE;
+                                                    LE
+                                                }
+                                                {
+                                                    PUSH bool False
+                                                };
+                                            IF
+                                                {
+                                                }
+                                                {
+                                                    PUSH string "WrongCondition: (params.assign_low_ratio >= 0) & (params.assign_low_ratio <= ((self.data.assign_low_ratio * 9) // 10))";
+                                                    FAILWITH
+                                                };
+                                            PUSH nat 0;
+                                            DUP 3;
+                                            CAR;
+                                            COMPARE;
+                                            GE;
+                                            IF
+                                                {
+                                                    PUSH nat 10;
+                                                    PUSH nat 9;
+                                                    DUP 5;
+                                                    GET 3;
+                                                    CAR;
+                                                    MUL;
+                                                    EDIV;
+                                                    IF_NONE
+                                                        {
+                                                            PUSH int 76;
+                                                            FAILWITH
+                                                        }
+                                                        {
+                                                            CAR
+                                                        };
+                                                    DUP 3;
+                                                    CAR;
+                                                    COMPARE;
+                                                    LE
+                                                }
+                                                {
+                                                    PUSH bool False
+                                                };
+                                            IF
+                                                {
+                                                }
+                                                {
+                                                    PUSH string "WrongCondition: (params.assign_high_ratio >= 0) & (params.assign_high_ratio <= ((self.data.assign_high_ratio * 9) // 10))";
+                                                    FAILWITH
+                                                };
+                                            DUG 2;
+                                            DUP;
+                                            DUG 3;
+                                            CDR;
+                                            UPDATE 5;
+                                            UNPAIR;
+                                            SWAP;
+                                            UNPAIR;
+                                            CDR;
+                                            DIG 4;
+                                            CAR;
+                                            PAIR;
+                                            PAIR;
+                                            SWAP;
+                                            PAIR;
+                                            SWAP;
+                                            PUSH int 6;
+                                            DUP 3;
+                                            CAR;
+                                            GET 3;
+                                            COMPARE;
+                                            LT;
+                                            IF
+                                                {
+                                                    SWAP;
+                                                    UNPAIR;
+                                                    UNPAIR;
+                                                    SWAP;
+                                                    UNPAIR;
+                                                    SWAP;
+                                                    CDR;
+                                                    PUSH nat 100000000000;
+                                                    PAIR;
+                                                    SWAP;
+                                                    PAIR;
+                                                    SWAP;
+                                                    PAIR;
+                                                    PAIR;
+                                                    SWAP
+                                                }
+                                                {
+                                                }
+                                        }
+                                }
+                                {
+                                    IF_LEFT
+                                        {
+                                            SWAP;
+                                            DUP;
+                                            DUG 2;
+                                            GET 7;
+                                            SENDER;
+                                            COMPARE;
+                                            EQ;
+                                            IF
+                                                {
+                                                }
+                                                {
+                                                    PUSH string "WrongCondition: sp.sender == self.data.manager";
+                                                    FAILWITH
+                                                };
+                                            NIL operation;
+                                            DUP 3;
+                                            CAR;
+                                            CAR;
+                                            CDR;
+                                            CONTRACT %set_metadata
+                                                (pair string bytes);
+                                            IF_NONE
+                                                {
+                                                    PUSH int 103;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            PUSH mutez 0;
+                                            DIG 3;
+                                            TRANSFER_TOKENS;
+                                            CONS
+                                        }
+                                        {
+                                            SWAP;
+                                            DUP;
+                                            DUG 2;
+                                            GET 7;
+                                            SENDER;
+                                            COMPARE;
+                                            EQ;
+                                            IF
+                                                {
+                                                }
+                                                {
+                                                    PUSH string "WrongCondition: sp.sender == self.data.manager";
+                                                    FAILWITH
+                                                };
+                                            NIL operation;
+                                            DUP 3;
+                                            CAR;
+                                            CAR;
+                                            CDR;
+                                            CONTRACT %set_pause bool;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 92;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            PUSH mutez 0;
+                                            DIG 3;
+                                            TRANSFER_TOKENS;
+                                            CONS
+                                        }
+                                }
+                        }
+                }
+                {
+                    IF_LEFT
+                        {
+                            IF_LEFT
+                                {
+                                    SWAP;
+                                    DUP;
+                                    DUG 2;
+                                    GET 7;
+                                    SENDER;
+                                    COMPARE;
+                                    EQ;
+                                    IF
+                                        {
+                                        }
+                                        {
+                                            PUSH string "WrongCondition: sp.sender == self.data.manager";
+                                            FAILWITH
+                                        };
+                                    SWAP;
+                                    DUP;
+                                    GET 8;
+                                    DUP 3;
+                                    CDR;
+                                    SOME;
+                                    DIG 3;
+                                    CAR;
+                                    UPDATE;
+                                    UPDATE 8
+                                }
+                                {
+                                    SWAP;
+                                    DUP;
+                                    DUG 2;
+                                    GET 7;
+                                    SENDER;
+                                    COMPARE;
+                                    EQ;
+                                    IF
+                                        {
+                                        }
+                                        {
+                                            PUSH string "WrongCondition: sp.sender == self.data.manager";
+                                            FAILWITH
+                                        };
+                                    DUP;
+                                    ITER
+                                        {
+                                            IF_LEFT
+                                                {
+                                                    DIG 2;
+                                                    UNPAIR;
+                                                    UNPAIR;
+                                                    UNPAIR;
+                                                    PUSH
+                                                        (option unit)
+                                                        (Some Unit);
+                                                    DIG 5;
+                                                    UPDATE;
+                                                    PAIR;
+                                                    PAIR;
+                                                    PAIR;
+                                                    SWAP
+                                                }
+                                                {
+                                                    DIG 2;
+                                                    UNPAIR;
+                                                    UNPAIR;
+                                                    UNPAIR;
+                                                    NONE unit;
+                                                    DIG 5;
+                                                    UPDATE;
+                                                    PAIR;
+                                                    PAIR;
+                                                    PAIR;
+                                                    SWAP
+                                                }
+                                        };
+                                    DROP
+                                }
+                        }
+                        {
+                            IF_LEFT
+                                {
+                                    SWAP;
+                                    DUP;
+                                    DUG 2;
+                                    GET 7;
+                                    SENDER;
+                                    COMPARE;
+                                    EQ;
+                                    IF
+                                        {
+                                        }
+                                        {
+                                            PUSH string "WrongCondition: sp.sender == self.data.manager";
+                                            FAILWITH
+                                        };
+                                    DUP;
+                                    ITER
+                                        {
+                                            IF_LEFT
+                                                {
+                                                    DIG 2;
+                                                    UNPAIR;
+                                                    UNPAIR;
+                                                    SWAP;
+                                                    UNPAIR;
+                                                    SWAP;
+                                                    UNPAIR;
+                                                    SWAP;
+                                                    PUSH
+                                                        (option unit)
+                                                        (Some Unit);
+                                                    DIG 6;
+                                                    UPDATE;
+                                                    SWAP;
+                                                    PAIR;
+                                                    SWAP;
+                                                    PAIR;
+                                                    SWAP;
+                                                    PAIR;
+                                                    PAIR;
+                                                    SWAP
+                                                }
+                                                {
+                                                    DIG 2;
+                                                    UNPAIR;
+                                                    UNPAIR;
+                                                    SWAP;
+                                                    UNPAIR;
+                                                    SWAP;
+                                                    UNPAIR;
+                                                    SWAP;
+                                                    NONE unit;
+                                                    DIG 6;
+                                                    UPDATE;
+                                                    SWAP;
+                                                    PAIR;
+                                                    SWAP;
+                                                    PAIR;
+                                                    SWAP;
+                                                    PAIR;
+                                                    PAIR;
+                                                    SWAP
+                                                }
+                                        };
+                                    DROP
+                                }
+                                {
+                                    IF_LEFT
+                                        {
+                                            SWAP;
+                                            DUP;
+                                            DUG 2;
+                                            GET 7;
+                                            SENDER;
+                                            COMPARE;
+                                            EQ;
+                                            IF
+                                                {
+                                                }
+                                                {
+                                                    PUSH string "WrongCondition: sp.sender == self.data.manager";
+                                                    FAILWITH
+                                                };
+                                            DUP;
+                                            ITER
+                                                {
+                                                    IF_LEFT
+                                                        {
+                                                            DIG 2;
+                                                            UNPAIR;
+                                                            SWAP;
+                                                            UNPAIR;
+                                                            UNPAIR;
+                                                            SWAP;
+                                                            PUSH
+                                                                (option unit)
+                                                                (Some Unit);
+                                                            DIG 5;
+                                                            UPDATE;
+                                                            SWAP;
+                                                            PAIR;
+                                                            PAIR;
+                                                            SWAP;
+                                                            PAIR;
+                                                            SWAP
+                                                        }
+                                                        {
+                                                            DIG 2;
+                                                            UNPAIR;
+                                                            SWAP;
+                                                            UNPAIR;
+                                                            UNPAIR;
+                                                            SWAP;
+                                                            NONE unit;
+                                                            DIG 5;
+                                                            UPDATE;
+                                                            SWAP;
+                                                            PAIR;
+                                                            PAIR;
+                                                            SWAP;
+                                                            PAIR;
+                                                            SWAP
+                                                        }
+                                                };
+                                            DROP
+                                        }
+                                        {
+                                            SWAP;
+                                            DUP;
+                                            DUG 2;
+                                            GET 7;
+                                            SENDER;
+                                            COMPARE;
+                                            EQ;
+                                            IF
+                                                {
+                                                }
+                                                {
+                                                    PUSH string "WrongCondition: sp.sender == self.data.manager";
+                                                    FAILWITH
+                                                };
+                                            UPDATE 7
+                                        }
+                                }
+                        };
+                    NIL operation
+                };
+            NIL operation;
+            SWAP;
+            ITER
+                {
+                    CONS
+                };
+            PAIR
+        }
+}

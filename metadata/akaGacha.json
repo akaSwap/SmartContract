@@ -1,0 +1,17 @@
+{
+    "authors": [
+        "akaSwap <service@akaswap.com>"
+    ],
+    "description": "For operation and storage at akaGacha",
+    "changelog":{
+        "1.1.0":"(1) Add issue time for gacha to start (2) Cancel the removal of the sold out gacha (3) Make oracle and manager both have permission to cancel gacha",
+        "1.1.1":"(1) Make sure issuer can only cancel while the gacha amount is correct (2) Add withdraw & refund function for admin"
+    },
+    "homepage": "https://akaSwap.com",
+    "interfaces": [],
+    "license": {
+        "name": "MIT"
+    },
+    "name": "akaGacha",
+    "version": "1.1.1"
+}

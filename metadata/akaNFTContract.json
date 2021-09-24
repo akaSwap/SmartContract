@@ -1,0 +1,15 @@
+{
+    "authors": [
+        "akaSwap <service@akaswap.com>"
+    ],
+    "description": "akaOBJ FA2 storage",
+    "homepage": "https://akaSwap.com",
+    "interfaces": [
+        "TZIP-12"
+    ],
+    "license": {
+        "name": "MIT"
+    },
+    "name": "akaNFTContract",
+    "version": "1.0.0"
+}

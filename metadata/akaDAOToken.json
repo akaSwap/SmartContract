@@ -1,0 +1,15 @@
+{
+    "authors": [
+        "akaSwap <service@akaswap.com>"
+    ],
+    "description": "akaSwap DAO FA2 Token",
+    "homepage": "https://akaSwap.com",
+    "interfaces": [
+        "TZIP-12"
+    ],
+    "license": {
+        "name": "MIT"
+    },
+    "name": "akaDAOToken",
+    "version": "1.0.0"
+}

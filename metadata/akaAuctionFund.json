@@ -1,0 +1,13 @@
+{
+    "authors": [
+        "akaSwap <service@akaswap.com>"
+    ],
+    "description": "Handling the fee assigning and save the royalties",
+    "homepage": "https://akaSwap.com",
+    "interfaces": [],
+    "license": {
+        "name": "MIT"
+    },
+    "name": "akaAuctionFund",
+    "version": "1.0.0"
+}

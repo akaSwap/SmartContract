@@ -1,0 +1,1000 @@
+{
+    storage
+        (pair
+            (pair
+                (pair
+                    (address %akaAuction)
+                    (address %akaDAOAdmin))
+                (pair
+                    (address %akaMinter)
+                    (bool %locked)))
+            (pair
+                (pair
+                    (nat %management_fee)
+                    (address %manager))
+                (pair
+                    (big_map %metadata string bytes)
+                    (big_map %royalties
+                        nat
+                        (pair
+                            (map %royalties address nat)
+                            (pair
+                                (address %sender)
+                                (nat %total_royalties)))))));
+    parameter
+        (or
+            (or
+                (nat %acquire_royalties)
+                (or
+                    (pair %handle_fee
+                        (nat %akaOBJ_id)
+                        (pair
+                            (address %buyer)
+                            (address %issuer)))
+                    (address %set_akaAuction)))
+            (or
+                (or
+                    (pair %set_metadata
+                        (string %k)
+                        (bytes %v))
+                    (pair %set_royalties
+                        (pair
+                            (nat %akaOBJ_id)
+                            (map %royalties address nat))
+                        (pair
+                            (address %sender)
+                            (nat %total_royalties))))
+                (or
+                    (nat %update_management_fee)
+                    (address %update_manager))));
+    code
+        {
+            CAST
+                (pair
+                    (or
+                        (or
+                            nat
+                            (or
+                                (pair
+                                    nat
+                                    (pair address address))
+                                address))
+                        (or
+                            (or
+                                (pair string bytes)
+                                (pair
+                                    (pair
+                                        nat
+                                        (map address nat))
+                                    (pair address nat)))
+                            (or nat address)))
+                    (pair
+                        (pair
+                            (pair address address)
+                            (pair address bool))
+                        (pair
+                            (pair nat address)
+                            (pair
+                                (big_map string bytes)
+                                (big_map
+                                    nat
+                                    (pair
+                                        (map address nat)
+                                        (pair address nat)))))));
+            UNPAIR;
+            IF_LEFT
+                {
+                    IF_LEFT
+                        {
+                            SWAP;
+                            DUP;
+                            DUG 2;
+                            GET 6;
+                            SWAP;
+                            DUP;
+                            DUG 2;
+                            MEM;
+                            IF
+                                {
+                                    DROP;
+                                    NIL operation
+                                }
+                                {
+                                    NIL operation;
+                                    DUP 3;
+                                    CAR;
+                                    GET 3;
+                                    CONTRACT %get_royalties
+                                        (pair nat address);
+                                    IF_NONE
+                                        {
+                                            PUSH int 32;
+                                            FAILWITH
+                                        }
+                                        {
+                                        };
+                                    PUSH mutez 0;
+                                    SELF_ADDRESS;
+                                    CONTRACT %set_royalties
+                                        (pair
+                                            (pair
+                                                nat
+                                                (map address nat))
+                                            (pair address nat));
+                                    IF_NONE
+                                        {
+                                            PUSH int 33;
+                                            FAILWITH
+                                        }
+                                        {
+                                        };
+                                    ADDRESS;
+                                    DIG 4;
+                                    PAIR;
+                                    TRANSFER_TOKENS;
+                                    CONS
+                                }
+                        }
+                        {
+                            IF_LEFT
+                                {
+                                    SWAP;
+                                    DUP;
+                                    DUG 2;
+                                    CAR;
+                                    CAR;
+                                    CAR;
+                                    SENDER;
+                                    COMPARE;
+                                    EQ;
+                                    IF
+                                        {
+                                        }
+                                        {
+                                            PUSH string "WrongCondition: sp.sender == self.data.akaAuction";
+                                            FAILWITH
+                                        };
+                                    PUSH mutez 0;
+                                    AMOUNT;
+                                    COMPARE;
+                                    NEQ;
+                                    IF
+                                        {
+                                            SWAP;
+                                            DUP;
+                                            GET 3;
+                                            CAR;
+                                            SWAP;
+                                            DUP;
+                                            DUG 3;
+                                            GET 6;
+                                            DUP 3;
+                                            CAR;
+                                            GET;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 56;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            GET 4;
+                                            ADD;
+                                            PUSH nat 1000;
+                                            DIG 3;
+                                            DUP;
+                                            GET 3;
+                                            CAR;
+                                            SWAP;
+                                            DUP;
+                                            DUG 5;
+                                            GET 6;
+                                            DUP 5;
+                                            CAR;
+                                            GET;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 55;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            GET 4;
+                                            ADD;
+                                            PUSH mutez 1;
+                                            AMOUNT;
+                                            EDIV;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 52;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            CAR;
+                                            MUL;
+                                            EDIV;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 55;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                    CAR
+                                                };
+                                            DUP 4;
+                                            GET 6;
+                                            DUP 4;
+                                            CAR;
+                                            GET;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 56;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            GET 4;
+                                            MUL;
+                                            EDIV;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 56;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                    CAR
+                                                };
+                                            NIL operation;
+                                            DUP 4;
+                                            GET 6;
+                                            DUP 4;
+                                            CAR;
+                                            GET;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 88;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            CAR;
+                                            ITER
+                                                {
+                                                    DUP 5;
+                                                    GET 6;
+                                                    DUP 5;
+                                                    CAR;
+                                                    GET;
+                                                    IF_NONE
+                                                        {
+                                                            PUSH int 89;
+                                                            FAILWITH
+                                                        }
+                                                        {
+                                                        };
+                                                    GET 3;
+                                                    SWAP;
+                                                    DUP;
+                                                    DUG 2;
+                                                    CAR;
+                                                    COMPARE;
+                                                    NEQ;
+                                                    IF
+                                                        {
+                                                            DUP;
+                                                            DUG 2;
+                                                            CAR;
+                                                            CONTRACT unit;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 91;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                };
+                                                            PUSH mutez 1;
+                                                            DUP 7;
+                                                            GET 6;
+                                                            DUP 7;
+                                                            CAR;
+                                                            GET;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 90;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                };
+                                                            GET 4;
+                                                            DUP 5;
+                                                            CDR;
+                                                            DIG 8;
+                                                            DUP;
+                                                            GET 3;
+                                                            CAR;
+                                                            SWAP;
+                                                            DUP;
+                                                            DUG 10;
+                                                            GET 6;
+                                                            DUP 10;
+                                                            CAR;
+                                                            GET;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 56;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                };
+                                                            GET 4;
+                                                            ADD;
+                                                            PUSH nat 1000;
+                                                            DIG 10;
+                                                            DUP;
+                                                            GET 3;
+                                                            CAR;
+                                                            SWAP;
+                                                            DUP;
+                                                            DUG 12;
+                                                            GET 6;
+                                                            DUP 12;
+                                                            CAR;
+                                                            GET;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 55;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                };
+                                                            GET 4;
+                                                            ADD;
+                                                            PUSH mutez 1;
+                                                            AMOUNT;
+                                                            EDIV;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 52;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                };
+                                                            CAR;
+                                                            MUL;
+                                                            EDIV;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 55;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                    CAR
+                                                                };
+                                                            DUP 11;
+                                                            GET 6;
+                                                            DUP 11;
+                                                            CAR;
+                                                            GET;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 56;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                };
+                                                            GET 4;
+                                                            MUL;
+                                                            EDIV;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 56;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                    CAR
+                                                                };
+                                                            MUL;
+                                                            EDIV;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 90;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                    CAR
+                                                                };
+                                                            MUL;
+                                                            UNIT;
+                                                            TRANSFER_TOKENS;
+                                                            CONS;
+                                                            SWAP;
+                                                            DUP 5;
+                                                            GET 6;
+                                                            DUP 5;
+                                                            CAR;
+                                                            GET;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 90;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                };
+                                                            GET 4;
+                                                            SWAP;
+                                                            CDR;
+                                                            DIG 5;
+                                                            DUP;
+                                                            GET 3;
+                                                            CAR;
+                                                            SWAP;
+                                                            DUP;
+                                                            DUG 7;
+                                                            GET 6;
+                                                            DUP 7;
+                                                            CAR;
+                                                            GET;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 56;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                };
+                                                            GET 4;
+                                                            ADD;
+                                                            PUSH nat 1000;
+                                                            DIG 7;
+                                                            DUP;
+                                                            GET 3;
+                                                            CAR;
+                                                            SWAP;
+                                                            DUP;
+                                                            DUG 9;
+                                                            GET 6;
+                                                            DUP 9;
+                                                            CAR;
+                                                            GET;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 55;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                };
+                                                            GET 4;
+                                                            ADD;
+                                                            PUSH mutez 1;
+                                                            AMOUNT;
+                                                            EDIV;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 52;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                };
+                                                            CAR;
+                                                            MUL;
+                                                            EDIV;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 55;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                    CAR
+                                                                };
+                                                            DUP 8;
+                                                            GET 6;
+                                                            DUP 8;
+                                                            CAR;
+                                                            GET;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 56;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                };
+                                                            GET 4;
+                                                            MUL;
+                                                            EDIV;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 56;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                    CAR
+                                                                };
+                                                            MUL;
+                                                            EDIV;
+                                                            IF_NONE
+                                                                {
+                                                                    PUSH int 90;
+                                                                    FAILWITH
+                                                                }
+                                                                {
+                                                                    CAR
+                                                                };
+                                                            DIG 2;
+                                                            SUB;
+                                                            ABS;
+                                                            SWAP
+                                                        }
+                                                        {
+                                                            DROP
+                                                        }
+                                                };
+                                            DUP 4;
+                                            GET 6;
+                                            DUP 4;
+                                            CAR;
+                                            GET;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 93;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            GET 3;
+                                            CONTRACT unit;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 93;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            PUSH mutez 1;
+                                            DIG 3;
+                                            MUL;
+                                            UNIT;
+                                            TRANSFER_TOKENS;
+                                            CONS;
+                                            DUP 3;
+                                            GET 3;
+                                            CDR;
+                                            CONTRACT unit;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 62;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            PUSH mutez 1;
+                                            DIG 4;
+                                            DUP;
+                                            GET 3;
+                                            CAR;
+                                            SWAP;
+                                            DUP;
+                                            DUG 6;
+                                            GET 6;
+                                            DUP 6;
+                                            CAR;
+                                            GET;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 56;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            GET 4;
+                                            ADD;
+                                            PUSH nat 1000;
+                                            DIG 6;
+                                            DUP;
+                                            GET 3;
+                                            CAR;
+                                            SWAP;
+                                            DUP;
+                                            DUG 8;
+                                            GET 6;
+                                            DUP 8;
+                                            CAR;
+                                            GET;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 55;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            GET 4;
+                                            ADD;
+                                            PUSH mutez 1;
+                                            AMOUNT;
+                                            EDIV;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 52;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            CAR;
+                                            MUL;
+                                            EDIV;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 55;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                    CAR
+                                                };
+                                            DUP 7;
+                                            GET 6;
+                                            DUP 7;
+                                            CAR;
+                                            GET;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 56;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            GET 4;
+                                            MUL;
+                                            EDIV;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 56;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                    CAR
+                                                };
+                                            PUSH nat 1000;
+                                            DIG 6;
+                                            DUP;
+                                            GET 3;
+                                            CAR;
+                                            SWAP;
+                                            DUP;
+                                            DUG 8;
+                                            GET 6;
+                                            DUP 8;
+                                            CAR;
+                                            GET;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 55;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            GET 4;
+                                            ADD;
+                                            PUSH mutez 1;
+                                            AMOUNT;
+                                            EDIV;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 52;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            CAR;
+                                            MUL;
+                                            EDIV;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 55;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                    CAR
+                                                };
+                                            SUB;
+                                            ABS;
+                                            MUL;
+                                            UNIT;
+                                            TRANSFER_TOKENS;
+                                            CONS;
+                                            SWAP;
+                                            DUP;
+                                            DUG 2;
+                                            GET 4;
+                                            CONTRACT unit;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 65;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            PUSH mutez 1;
+                                            PUSH nat 1000;
+                                            DIG 5;
+                                            DUP;
+                                            GET 3;
+                                            CAR;
+                                            SWAP;
+                                            DUP;
+                                            DUG 7;
+                                            GET 6;
+                                            DUP 7;
+                                            CAR;
+                                            GET;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 55;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            GET 4;
+                                            ADD;
+                                            PUSH mutez 1;
+                                            AMOUNT;
+                                            EDIV;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 52;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            CAR;
+                                            MUL;
+                                            EDIV;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 55;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                    CAR
+                                                };
+                                            PUSH mutez 1;
+                                            AMOUNT;
+                                            EDIV;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 52;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            CAR;
+                                            SUB;
+                                            ABS;
+                                            MUL;
+                                            UNIT;
+                                            TRANSFER_TOKENS;
+                                            CONS;
+                                            DUP 3;
+                                            CAR;
+                                            CAR;
+                                            CDR;
+                                            CONTRACT %assign_akaDAO
+                                                (pair
+                                                    address
+                                                    (pair address nat));
+                                            IF_NONE
+                                                {
+                                                    PUSH int 68;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            PUSH mutez 0;
+                                            PUSH mutez 1;
+                                            AMOUNT;
+                                            EDIV;
+                                            IF_NONE
+                                                {
+                                                    PUSH int 52;
+                                                    FAILWITH
+                                                }
+                                                {
+                                                };
+                                            CAR;
+                                            DIG 4;
+                                            DUP;
+                                            GET 4;
+                                            SWAP;
+                                            GET 3;
+                                            PAIR 3;
+                                            TRANSFER_TOKENS;
+                                            CONS
+                                        }
+                                        {
+                                            DROP;
+                                            NIL operation
+                                        }
+                                }
+                                {
+                                    SWAP;
+                                    DUP;
+                                    DUG 2;
+                                    GET 3;
+                                    CDR;
+                                    SENDER;
+                                    COMPARE;
+                                    EQ;
+                                    IF
+                                        {
+                                            SWAP;
+                                            DUP;
+                                            DUG 2;
+                                            CAR;
+                                            GET 4;
+                                            NOT
+                                        }
+                                        {
+                                            PUSH bool False
+                                        };
+                                    IF
+                                        {
+                                        }
+                                        {
+                                            PUSH string "WrongCondition: (sp.sender == self.data.manager) & (~ self.data.locked)";
+                                            FAILWITH
+                                        };
+                                    SWAP;
+                                    UNPAIR;
+                                    UNPAIR;
+                                    CDR;
+                                    DIG 3;
+                                    PAIR;
+                                    SWAP;
+                                    CAR;
+                                    PUSH bool True;
+                                    SWAP;
+                                    PAIR;
+                                    SWAP;
+                                    PAIR;
+                                    PAIR;
+                                    NIL operation
+                                }
+                        }
+                }
+                {
+                    IF_LEFT
+                        {
+                            IF_LEFT
+                                {
+                                    SWAP;
+                                    DUP;
+                                    DUG 2;
+                                    GET 3;
+                                    CDR;
+                                    SENDER;
+                                    COMPARE;
+                                    EQ;
+                                    IF
+                                        {
+                                        }
+                                        {
+                                            PUSH string "WrongCondition: sp.sender == self.data.manager";
+                                            FAILWITH
+                                        };
+                                    SWAP;
+                                    DUP;
+                                    GET 5;
+                                    DUP 3;
+                                    CDR;
+                                    SOME;
+                                    DIG 3;
+                                    CAR;
+                                    UPDATE;
+                                    UPDATE 5
+                                }
+                                {
+                                    SWAP;
+                                    DUP;
+                                    DUG 2;
+                                    CAR;
+                                    GET 3;
+                                    SENDER;
+                                    COMPARE;
+                                    EQ;
+                                    IF
+                                        {
+                                        }
+                                        {
+                                            PUSH string "WrongCondition: sp.sender == self.data.akaMinter";
+                                            FAILWITH
+                                        };
+                                    SWAP;
+                                    DUP;
+                                    GET 6;
+                                    DIG 2;
+                                    DUP;
+                                    GET 4;
+                                    SWAP;
+                                    DUP;
+                                    GET 3;
+                                    SWAP;
+                                    DUP;
+                                    DUG 5;
+                                    CAR;
+                                    CDR;
+                                    PAIR 3;
+                                    SOME;
+                                    DIG 3;
+                                    CAR;
+                                    CAR;
+                                    UPDATE;
+                                    UPDATE 6
+                                }
+                        }
+                        {
+                            IF_LEFT
+                                {
+                                    SWAP;
+                                    DUP;
+                                    DUG 2;
+                                    GET 3;
+                                    CDR;
+                                    SENDER;
+                                    COMPARE;
+                                    EQ;
+                                    IF
+                                        {
+                                        }
+                                        {
+                                            PUSH string "WrongCondition: sp.sender == self.data.manager";
+                                            FAILWITH
+                                        };
+                                    SWAP;
+                                    UNPAIR;
+                                    SWAP;
+                                    UNPAIR;
+                                    CDR;
+                                    DIG 3;
+                                    PAIR;
+                                    PAIR;
+                                    SWAP;
+                                    PAIR
+                                }
+                                {
+                                    SWAP;
+                                    DUP;
+                                    DUG 2;
+                                    GET 3;
+                                    CDR;
+                                    SENDER;
+                                    COMPARE;
+                                    EQ;
+                                    IF
+                                        {
+                                        }
+                                        {
+                                            PUSH string "WrongCondition: sp.sender == self.data.manager";
+                                            FAILWITH
+                                        };
+                                    SWAP;
+                                    UNPAIR;
+                                    SWAP;
+                                    UNPAIR;
+                                    CAR;
+                                    DIG 3;
+                                    SWAP;
+                                    PAIR;
+                                    PAIR;
+                                    SWAP;
+                                    PAIR
+                                }
+                        };
+                    NIL operation
+                };
+            NIL operation;
+            SWAP;
+            ITER
+                {
+                    CONS
+                };
+            PAIR
+        }
+}

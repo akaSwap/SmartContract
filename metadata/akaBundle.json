@@ -1,0 +1,13 @@
+{
+    "authors": [
+        "akaSwap <service@akaswap.com>"
+    ],
+    "description": "For operation and storage at akaBundle",
+    "homepage": "https://akaSwap.com",
+    "interfaces": [],
+    "license": {
+        "name": "MIT"
+    },
+    "name": "akaBundle",
+    "version": "1.0.0"
+}

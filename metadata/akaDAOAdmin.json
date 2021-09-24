@@ -1,0 +1,13 @@
+{
+    "authors": [
+        "akaSwap <service@akaswap.com>"
+    ],
+    "description": "Administrator of the akaDAOToken, for assigning akaDAO.",
+    "homepage": "https://akaSwap.com",
+    "interfaces": [],
+    "license": {
+        "name": "MIT"
+    },
+    "name": "akaDAOAdmin",
+    "version": "1.0.0"
+}

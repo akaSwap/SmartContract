@@ -1,0 +1,13 @@
+{
+    "authors": [
+        "akaSwap <service@akaswap.com>"
+    ],
+    "description": "For operation and storage at akaAuction",
+    "homepage": "https://akaSwap.com",
+    "interfaces": [],
+    "license": {
+        "name": "MIT"
+    },
+    "name": "akaAuction",
+    "version": "1.0.0"
+}
